@@ -7,3 +7,4 @@ resources:
   - auth
   - student
   - content
+  - progress
