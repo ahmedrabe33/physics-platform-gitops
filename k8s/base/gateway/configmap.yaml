@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: gateway-config
+
+data:
+  PORT: "8080"
+  NODE_ENV: production
+
+  AUTH_SERVICE: http://auth-service:3001
+  STUDENT_SERVICE: http://student-service:3002
+  CONTENT_SERVICE: http://content-service:3003
+  PROGRESS_SERVICE: http://progress-service:3004
+

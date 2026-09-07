@@ -8,3 +8,4 @@ resources:
   - student
   - content
   - progress
+  - gateway
