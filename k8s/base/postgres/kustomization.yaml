@@ -7,3 +7,9 @@ resources:
   - headless-service.yaml
   - service.yaml
   - statefulset.yaml
+  - init-job.yaml
+
+configMapGenerator:
+  - name: postgres-schema
+    files:
+      - schema.sql=schema/schema.sql
