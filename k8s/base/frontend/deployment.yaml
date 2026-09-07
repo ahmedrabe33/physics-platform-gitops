@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: frontend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      containers:
+        - name: frontend
+          image: physics-frontend:v1
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 3000
+
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: PORT
+
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: NODE_ENV
+
+            - name: GATEWAY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: GATEWAY_URL
+
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 10
