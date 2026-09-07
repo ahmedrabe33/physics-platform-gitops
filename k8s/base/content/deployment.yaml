@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: content-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: content-service
+
+  template:
+    metadata:
+      labels:
+        app: content-service
+
+    spec:
+      containers:
+        - name: content-service
+          image: physics-content:v1
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 3003
+
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: content-config
+                  key: PORT
+
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: content-config
+                  key: NODE_ENV
+
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: content-config
+                  key: DB_HOST
+
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: content-config
+                  key: DB_PORT
+
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: content-config
+                  key: POSTGRES_DB
+
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 20
+            periodSeconds: 10

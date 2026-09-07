@@ -12,3 +12,11 @@ patches:
       - op: add
         path: /spec/volumeClaimTemplates/0/spec/storageClassName
         value: standard
+
+  - target:
+      kind: PersistentVolumeClaim
+      name: student-uploads-pvc
+    patch: |-
+      - op: add
+        path: /spec/storageClassName
+        value: standard
