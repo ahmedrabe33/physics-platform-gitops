@@ -18,3 +18,28 @@ patches:
       version: v1
       kind: PersistentVolumeClaim
       name: student-uploads-pvc
+
+images:
+  - name: physics-auth
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/auth
+    newTag: 44d36bb
+
+  - name: physics-student
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/student
+    newTag: 44d36bb
+
+  - name: physics-content
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/content
+    newTag: 44d36bb
+
+  - name: physics-progress
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/progress
+    newTag: 44d36bb
+
+  - name: physics-gateway
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/gateway
+    newTag: 44d36bb
+
+  - name: physics-frontend
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/frontend
+    newTag: 44d36bb
