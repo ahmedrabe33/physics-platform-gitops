@@ -12,3 +12,9 @@ patches:
       version: v1
       kind: StatefulSet
       name: postgres
+
+  - path: patches/student-uploads-pvc.yaml
+    target:
+      version: v1
+      kind: PersistentVolumeClaim
+      name: student-uploads-pvc
