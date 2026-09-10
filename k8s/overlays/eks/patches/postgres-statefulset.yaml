@@ -1,0 +1,8 @@
+- op: add
+  path: /spec/template/spec/nodeSelector
+  value:
+    workload: stateful
+
+- op: add
+  path: /spec/volumeClaimTemplates/0/spec/storageClassName
+  value: gp3-stateful
