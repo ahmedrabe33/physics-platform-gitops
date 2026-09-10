@@ -4,13 +4,14 @@ kind: Ingress
 metadata:
   name: physics-platform
   namespace: physics-platform
-
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 spec:
   ingressClassName: nginx
 
   rules:
-    - host: physics.local
-      http:
+    
+    - http:
         paths:
 
           - path: /api

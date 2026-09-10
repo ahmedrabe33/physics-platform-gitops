@@ -1,182 +1,239 @@
--- ======================================================
--- Users
--- ======================================================
+-- =========================================================
+-- Physics Learning Platform - PostgreSQL Schema
+-- =========================================================
 
-CREATE TABLE IF NOT EXISTS users (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
+-- =========================
+-- USERS
+-- =========================
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+
     grade VARCHAR(20),
     role VARCHAR(20) NOT NULL DEFAULT 'student',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT users_grade_check
+        CHECK (grade IS NULL OR grade IN ('second', 'third')),
+
+    CONSTRAINT users_role_check
+        CHECK (role IN ('student', 'admin'))
 );
 
 
--- ======================================================
--- Students
--- ======================================================
+-- =========================
+-- STUDENTS
+-- =========================
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
 
-CREATE TABLE IF NOT EXISTS students (
-    id BIGSERIAL PRIMARY KEY,
-
-    user_id BIGINT UNIQUE NOT NULL
-        REFERENCES users(id)
-        ON DELETE CASCADE,
+    user_id INTEGER NOT NULL UNIQUE,
 
     username VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     grade VARCHAR(20) NOT NULL,
+
     payment_proof TEXT,
+
     status VARCHAR(20) NOT NULL DEFAULT 'pending',
+
     registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     approved_at TIMESTAMPTZ,
-    subscription_expiry TIMESTAMPTZ
+    subscription_expiry TIMESTAMPTZ,
+
+    CONSTRAINT students_user_fk
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT students_grade_check
+        CHECK (grade IN ('second', 'third')),
+
+    CONSTRAINT students_status_check
+        CHECK (
+            status IN (
+                'pending',
+                'approved',
+                'rejected',
+                'expired'
+            )
+        )
 );
 
 
--- ======================================================
--- Chapters
--- ======================================================
+-- =========================
+-- CHAPTERS
+-- =========================
+CREATE TABLE chapters (
+    id SERIAL PRIMARY KEY,
 
-CREATE TABLE IF NOT EXISTS chapters (
-    id BIGSERIAL PRIMARY KEY,
     grade VARCHAR(20) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    chapter_order INTEGER NOT NULL DEFAULT 1,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    title TEXT NOT NULL,
+    chapter_order INTEGER NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT chapters_grade_check
+        CHECK (grade IN ('second', 'third'))
 );
 
 
--- ======================================================
--- Lessons
--- ======================================================
+-- =========================
+-- LESSONS
+-- =========================
+CREATE TABLE lessons (
+    id SERIAL PRIMARY KEY,
 
-CREATE TABLE IF NOT EXISTS lessons (
-    id BIGSERIAL PRIMARY KEY,
+    chapter_id INTEGER NOT NULL,
 
-    chapter_id BIGINT NOT NULL
+    title TEXT NOT NULL,
+    description TEXT,
+    video_url TEXT,
+
+    lesson_order INTEGER NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT lessons_chapter_fk
+        FOREIGN KEY (chapter_id)
         REFERENCES chapters(id)
-        ON DELETE CASCADE,
-
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    video_url TEXT,
-    lesson_order INTEGER NOT NULL DEFAULT 1,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        ON DELETE CASCADE
 );
 
 
--- ======================================================
--- Lesson Topics
--- ======================================================
+-- =========================
+-- LESSON TOPICS
+-- =========================
+CREATE TABLE lesson_topics (
+    id SERIAL PRIMARY KEY,
 
-CREATE TABLE IF NOT EXISTS lesson_topics (
-    id BIGSERIAL PRIMARY KEY,
+    lesson_id INTEGER NOT NULL,
 
-    lesson_id BIGINT NOT NULL
-        REFERENCES lessons(id)
-        ON DELETE CASCADE,
-
-    title VARCHAR(255) NOT NULL,
+    title TEXT NOT NULL,
     description TEXT,
     video_url TEXT,
-    topic_order INTEGER NOT NULL DEFAULT 1,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+    topic_order INTEGER NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT lesson_topics_lesson_fk
+        FOREIGN KEY (lesson_id)
+        REFERENCES lessons(id)
+        ON DELETE CASCADE
 );
 
 
--- ======================================================
--- Exercises
--- ======================================================
+-- =========================
+-- EXERCISES
+-- =========================
+CREATE TABLE exercises (
+    id SERIAL PRIMARY KEY,
 
-CREATE TABLE IF NOT EXISTS exercises (
-    id BIGSERIAL PRIMARY KEY,
-
-    lesson_id BIGINT NOT NULL
-        REFERENCES lessons(id)
-        ON DELETE CASCADE,
+    lesson_id INTEGER NOT NULL,
 
     question TEXT NOT NULL,
     correct_answer TEXT NOT NULL,
-    exercise_order INTEGER NOT NULL DEFAULT 1
+
+    exercise_order INTEGER NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT exercises_lesson_fk
+        FOREIGN KEY (lesson_id)
+        REFERENCES lessons(id)
+        ON DELETE CASCADE
 );
 
 
--- ======================================================
--- Student Progress
--- ======================================================
+-- =========================
+-- PROGRESS
+-- =========================
+CREATE TABLE progress (
+    id SERIAL PRIMARY KEY,
 
-CREATE TABLE IF NOT EXISTS progress (
-    id BIGSERIAL PRIMARY KEY,
-
-    user_id BIGINT NOT NULL
-        REFERENCES users(id)
-        ON DELETE CASCADE,
-
-    lesson_id BIGINT NOT NULL
-        REFERENCES lessons(id)
-        ON DELETE CASCADE,
+    user_id INTEGER NOT NULL,
+    lesson_id INTEGER NOT NULL,
 
     completed BOOLEAN NOT NULL DEFAULT FALSE,
-    score INTEGER DEFAULT 0,
+    score INTEGER,
     completed_at TIMESTAMPTZ,
 
-    UNIQUE(user_id, lesson_id)
-);
-
-
--- ======================================================
--- Video Views
--- ======================================================
-
-CREATE TABLE IF NOT EXISTS video_views (
-    id BIGSERIAL PRIMARY KEY,
-
-    user_id BIGINT NOT NULL
+    CONSTRAINT progress_user_fk
+        FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE,
 
-    lesson_id BIGINT NOT NULL
+    CONSTRAINT progress_lesson_fk
+        FOREIGN KEY (lesson_id)
         REFERENCES lessons(id)
         ON DELETE CASCADE,
 
-    topic_id BIGINT
-        REFERENCES lesson_topics(id)
-        ON DELETE SET NULL,
-
-    video_url TEXT,
-    opened_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    CONSTRAINT progress_user_lesson_unique
+        UNIQUE (user_id, lesson_id)
 );
 
 
--- ======================================================
--- Indexes
--- ======================================================
+-- =========================
+-- VIDEO VIEWS
+-- =========================
+CREATE TABLE video_views (
+    id SERIAL PRIMARY KEY,
 
-CREATE INDEX IF NOT EXISTS idx_students_user_id
-ON students(user_id);
+    user_id INTEGER NOT NULL,
+    lesson_id INTEGER NOT NULL,
+    topic_id INTEGER,
 
-CREATE INDEX IF NOT EXISTS idx_chapters_grade
-ON chapters(grade);
+    video_url TEXT,
+    opened_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-CREATE INDEX IF NOT EXISTS idx_lessons_chapter_id
-ON lessons(chapter_id);
+    CONSTRAINT video_views_user_fk
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
 
-CREATE INDEX IF NOT EXISTS idx_lesson_topics_lesson_id
-ON lesson_topics(lesson_id);
+    CONSTRAINT video_views_lesson_fk
+        FOREIGN KEY (lesson_id)
+        REFERENCES lessons(id)
+        ON DELETE CASCADE,
 
-CREATE INDEX IF NOT EXISTS idx_progress_user_id
-ON progress(user_id);
+    CONSTRAINT video_views_topic_fk
+        FOREIGN KEY (topic_id)
+        REFERENCES lesson_topics(id)
+        ON DELETE SET NULL
+);
 
-CREATE INDEX IF NOT EXISTS idx_video_views_user_id
-ON video_views(user_id);
 
-CREATE INDEX IF NOT EXISTS idx_video_views_lesson_id
-ON video_views(lesson_id);
+-- =========================
+-- INDEXES
+-- =========================
+CREATE INDEX idx_students_status
+    ON students(status);
 
-CREATE INDEX IF NOT EXISTS idx_video_views_topic_id
-ON video_views(topic_id);
+CREATE INDEX idx_students_grade
+    ON students(grade);
 
-CREATE INDEX IF NOT EXISTS idx_video_views_opened_at
-ON video_views(opened_at);
+CREATE INDEX idx_chapters_grade_order
+    ON chapters(grade, chapter_order);
+
+CREATE INDEX idx_lessons_chapter_order
+    ON lessons(chapter_id, lesson_order);
+
+CREATE INDEX idx_topics_lesson_order
+    ON lesson_topics(lesson_id, topic_order);
+
+CREATE INDEX idx_exercises_lesson_order
+    ON exercises(lesson_id, exercise_order);
+
+CREATE INDEX idx_progress_user
+    ON progress(user_id);
+
+CREATE INDEX idx_video_views_user
+    ON video_views(user_id);
+
+CREATE INDEX idx_video_views_opened
+    ON video_views(opened_at DESC);

@@ -22,7 +22,7 @@ spec:
 
       containers:
         - name: student-service
-          image: physics-student:v1
+          image: physics-student:v2
           imagePullPolicy: IfNotPresent
 
           ports:

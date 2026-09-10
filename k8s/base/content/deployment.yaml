@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: content-service
-          image: physics-content:v1
+          image: physics-content:v2
           imagePullPolicy: IfNotPresent
 
           ports:

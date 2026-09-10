@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: progress-service
-          image: physics-progress:v1
+          image: physics-progress:v2
           imagePullPolicy: IfNotPresent
 
           ports:
