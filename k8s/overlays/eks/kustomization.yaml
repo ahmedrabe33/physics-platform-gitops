@@ -6,6 +6,7 @@ resources:
   - storage/gp3-stateful.yaml
 
 patches:
+  # PostgreSQL -> stable managed nodes + gp3
   - path: patches/postgres-statefulset.yaml
     target:
       group: apps
@@ -13,11 +14,48 @@ patches:
       kind: StatefulSet
       name: postgres
 
+  # Student uploads PVC -> gp3
   - path: patches/student-uploads-pvc.yaml
     target:
       version: v1
       kind: PersistentVolumeClaim
       name: student-uploads-pvc
+
+  # Stateless workloads -> Karpenter nodes
+  - path: patches/application-nodes.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: auth-service
+
+  - path: patches/application-nodes.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: content-service
+
+  - path: patches/application-nodes.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: progress-service
+
+  - path: patches/application-nodes.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: gateway
+
+  - path: patches/application-nodes.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: frontend
 
 images:
   - name: physics-auth
