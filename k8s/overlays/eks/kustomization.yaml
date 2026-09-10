@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - ../../base
   - storage/gp3-stateful.yaml
-
+  - ingress.yaml
 patches:
   # PostgreSQL -> stable managed nodes + gp3
   - path: patches/postgres-statefulset.yaml
