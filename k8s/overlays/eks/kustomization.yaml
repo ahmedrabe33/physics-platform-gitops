@@ -59,24 +59,24 @@ patches:
 images:
   - name: physics-auth
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: auth-service-9
+    newTag: auth-service-10
 
   - name: physics-student
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: student-service-9
+    newTag: student-service-10
 
   - name: physics-content
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: content-service-9
+    newTag: content-service-10
 
   - name: physics-progress
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: progress-service-9
+    newTag: progress-service-10
 
   - name: physics-gateway
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: gateway-9
+    newTag: gateway-10
 
   - name: physics-frontend
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: frontend-9
+    newTag: frontend-10
