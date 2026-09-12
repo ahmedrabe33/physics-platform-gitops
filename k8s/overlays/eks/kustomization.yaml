@@ -58,8 +58,8 @@ patches:
       name: frontend
 images:
   - name: physics-auth
-    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/auth
-    newTag: 44d36bb
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
+    newTag: auth-service-6
 
   - name: physics-student
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/student
