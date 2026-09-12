@@ -59,24 +59,24 @@ patches:
 images:
   - name: physics-auth
     newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
-    newTag: auth-service-8
+    newTag: auth-service-9
 
   - name: physics-student
-    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/student
-    newTag: 44d36bb
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
+    newTag: student-service-9
 
   - name: physics-content
-    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/content
-    newTag: 44d36bb
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
+    newTag: content-service-9
 
   - name: physics-progress
-    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/progress
-    newTag: 44d36bb
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
+    newTag: progress-service-9
 
   - name: physics-gateway
-    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/gateway
-    newTag: 44d36bb
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
+    newTag: gateway-9
 
   - name: physics-frontend
-    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/physics-platform/frontend
-    newTag: 44d36bb
+    newName: 112859066474.dkr.ecr.us-east-2.amazonaws.com/platform-app
+    newTag: frontend-9
